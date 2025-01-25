@@ -18,3 +18,6 @@ class TaskBase(Base):
     explain: Mapped[str] = mapped_column(String())
     creation_date: Mapped[str] = mapped_column(String())
     deadline: Mapped[str] = mapped_column(String())
+
+    def __repr__(self) -> str:
+        return f"TaskBase(id={self.id}, short_name={self.short_name}, explain={self.explain}, creation_date={self.creation_date}, deadline={self.deadline})"

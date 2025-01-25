@@ -1,4 +1,5 @@
 import flet as ft
+import database.actions as db
 
 #default UI settings
 
@@ -84,6 +85,7 @@ def main(page: ft.Page):
             self.horizontal_alignment = ft.CrossAxisAlignment.CENTER
 
         def add_task(self, e):
+            db.add_task(self.short_name.value, self.explain.value, self.deadline.value)
             page.go("/")
 
 
@@ -115,7 +117,7 @@ def main(page: ft.Page):
                 MyText("Font"),
                 self.font,
                 MyButton("Done", self.done),
-                MyButton("Generate Database", None)
+                MyButton("Generate Database", self.gen_db)
             ]
 
             self.spacing = 30
@@ -138,6 +140,9 @@ def main(page: ft.Page):
             Vwelcome.controls[1] = Welcome()
             Vsettings.controls[1] = Settings()
             page.go("/")
+
+        def gen_db(self, e):
+            db.create_db_and_tables()
 
 
     class Welcome(ft.Column):
@@ -182,7 +187,7 @@ def main(page: ft.Page):
         def __init__(self):
             super().__init__()
 
-            self.gain_tasks = example_task_list
+            self.gain_tasks = db.get_all_tasks()
 
             self.controls = [ChooseTask(task["id"], task["short_name"]) for task in self.gain_tasks]
 
@@ -191,7 +196,7 @@ def main(page: ft.Page):
         def __init__(self, id):
             super().__init__()
             self.id = id
-            self.gain_task = example_task
+            self.gain_task = db.get_task_by_id(id)
 
             self.controls = [
                 MyText(self.gain_task["explain"]),
@@ -201,6 +206,7 @@ def main(page: ft.Page):
             ]
 
         def complete_task(self, e):
+            db.delete_task(self.id)
             Vtasks.controls[1] = ListOfTasks()
             page.go("/tasks")
 
