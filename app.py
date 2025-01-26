@@ -86,6 +86,8 @@ def main(page: ft.Page):
 
         def add_task(self, e):
             db.add_task(self.short_name.value, self.explain.value, self.deadline.value)
+            db.work_with_info("cur", "upd", 1)
+            Vwelcome.controls[1] = Welcome()
             page.go("/")
 
 
@@ -93,19 +95,19 @@ def main(page: ft.Page):
         def __init__(self):
             super().__init__()
 
-            self.text_color = ft.Dropdown("green", options=[
+            self.text_color = ft.Dropdown(value=text_color, options=[
                     ft.dropdown.Option("green"),
                     ft.dropdown.Option("white"),
                     ft.dropdown.Option("gray")
             ], width=200, on_change=self.chg_text_color)
 
-            self.button_color = ft.Dropdown("yellow", options=[
+            self.button_color = ft.Dropdown(value=button_color, options=[
                     ft.dropdown.Option("yellow"),
                     ft.dropdown.Option("green"),
                     ft.dropdown.Option("gray")
             ], width=200, on_change=self.chg_button_color)
 
-            self.font = ft.Dropdown("TimesNewRoman", options=[
+            self.font = ft.Dropdown(value=font, options=[
                     ft.dropdown.Option("TimesNewRoman")
             ], width=200, on_change=self.chg_font)
 
@@ -153,9 +155,9 @@ def main(page: ft.Page):
                 MyButton("Show tasks", lambda _: page.go("/tasks")),
                 MyButton("Add task", lambda _: page.go("/addtask")),
                 MyButton("Cat?", None),
-                MyText("Current tasks: "),
-                MyText("Solved tasks: "),
-                MyText("Failed tasks: ")
+                MyText(f"Current tasks: {db.work_with_info('cur', 'get')}"),
+                MyText(f"Solved tasks: {db.work_with_info('solv', 'get')}"),
+                MyText(f"Failed tasks: {db.work_with_info('fail', 'get')}")
             ]
 
             self.spacing = 20
@@ -207,7 +209,10 @@ def main(page: ft.Page):
 
         def complete_task(self, e):
             db.delete_task(self.id)
+            db.work_with_info("cur", "upd", -1)
+            db.work_with_info("solv", "upd")
             Vtasks.controls[1] = ListOfTasks()
+            Vwelcome.controls[1] = Welcome()
             page.go("/tasks")
 
 

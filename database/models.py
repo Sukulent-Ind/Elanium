@@ -21,3 +21,11 @@ class TaskBase(Base):
 
     def __repr__(self) -> str:
         return f"TaskBase(id={self.id}, short_name={self.short_name}, explain={self.explain}, creation_date={self.creation_date}, deadline={self.deadline})"
+
+
+class InfoBase(Base):
+    __tablename__ = "Technical data"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    data: Mapped[str] = mapped_column(String())
+    val: Mapped[int] = mapped_column()
